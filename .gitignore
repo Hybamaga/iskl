@@ -1,0 +1,30 @@
+#include <iostream>
+#include <stdexcept>
+
+long long factorial(int n) {
+    if (n < 0) {
+        // Бросаем исключение типа invalid_argument
+        throw std::invalid_argument("Факториал отрицательного числа не существует!");
+    }
+    
+    long long result = 1;
+    for (int i = 2; i <= n; i++) {
+        result *= i;
+    }
+    return result;
+}
+
+int main() {
+    try {
+        // Код, который может вызвать ошибку
+        std::cout << "Факториал 5: " << factorial(5) << std::endl;
+        std::cout << "Факториал -2: " << factorial(-2) << std::endl;
+    }
+    catch (const std::invalid_argument& e) {
+        // Обработка исключения типа invalid_argument
+        std::cout << "Поймано исключение: " << e.what() << std::endl;
+    }
+    
+    return 0;
+}
+
