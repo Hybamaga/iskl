@@ -1,30 +1,89 @@
 #include <iostream>
-#include <stdexcept>
+#include <stdexcept> 
+#include <string>
+#include <vector>
+#include <cctype> // для isalpha() и isspace()
+#include <limits> // для numeric_limits
 
-long long factorial(int n) {
-    if (n < 0) {
-        // Бросаем исключение типа invalid_argument
-        throw std::invalid_argument("Факториал отрицательного числа не существует!");
+using namespace std;
+
+class tovar {
+private:
+    string name;
+    double cena;
+    int kol;
+
+public:
+    tovar(string n, double c, int k) {
+        // Проверка что название содержит только буквы и пробелы
+        for (char ch : n) {
+            if (!isalpha(ch) && !isspace(ch)) {
+                throw domain_error("Название товара должно содержать только буквы и пробелы!");
+            }
+        }
+        
+        // Проверка что название не пустое
+        if (n.empty()) {
+            throw domain_error("Название товара не может быть пустым!");
+        }
+        
+        name = n;
+        
+        if (c <= 0) {
+            throw domain_error("Цена должна быть положительным числом!");
+        }
+        cena = c;
+        
+        if (k <= 0) {
+            throw domain_error("Количество должно быть положительным числом!");
+        }
+        kol = k;
     }
-    
-    long long result = 1;
-    for (int i = 2; i <= n; i++) {
-        result *= i;
+
+    void display() {
+        cout << "Товар: " << name << "  Цена: " << cena << "  Количество: " << kol << endl;
     }
-    return result;
-}
+};
 
 int main() {
-    try {
-        // Код, который может вызвать ошибку
-        std::cout << "Факториал 5: " << factorial(5) << std::endl;
-        std::cout << "Факториал -2: " << factorial(-2) << std::endl;
+    setlocale(LC_ALL, "RU");
+    vector<tovar> tovari;
+    char prodoljit;
+
+    do {
+        try {
+            string name;
+            double cena;
+            int kol;
+
+            cout << "Название товара: ";
+            cin.ignore(); // очищаем буфер перед вводом названия
+            getline(cin, name); // читаем всю строку с пробелами
+
+            cout << "Цена за товар: ";
+            cin >> cena;
+
+            cout << "Количество товара: ";
+            cin >> kol;
+            
+            tovar t(name, cena, kol);
+            tovari.push_back(t);
+            cout << "Товар добавлен!" << endl;
+        }
+        catch (const domain_error& e) {
+            cout << "Ошибка: " << e.what() << endl;
+        }
+
+        cout << "Добавить еще товар? (y/n): ";
+        cin >> prodoljit;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // очищаем буфер
+
+    } while (prodoljit == 'y' || prodoljit == 'Y');
+
+    cout << "\nСписок товаров:" << endl;
+    for (size_t i = 0; i < tovari.size(); i++) {
+        tovari[i].display();
     }
-    catch (const std::invalid_argument& e) {
-        // Обработка исключения типа invalid_argument
-        std::cout << "Поймано исключение: " << e.what() << std::endl;
-    }
-    
+
     return 0;
 }
-
